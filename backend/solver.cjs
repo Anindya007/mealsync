@@ -1,25 +1,36 @@
-const { MongoClient } = require('mongodb');
+// Replace MongoClient imports with Mongoose
+const mongoose = require('mongoose');
 const solver = require('javascript-lp-solver');
 
-const MONGO_URI = 'mongodb://localhost:27017';
-const DB_NAME = 'mealplanner';
-const COLLECTION_NAME = 'meals';
+// Define Meal schema
+const mealSchema = new mongoose.Schema({
+  // Add all your meal fields here matching your database structure
+  name: String,
+  calories: Number,
+  protein: Number,
+  carbs: Number,
+  fat: Number,
+  type: String,
+  isVegetarian: Boolean,
+  isVegan: Boolean
+});
+
+const Meal = mongoose.model('Meal', mealSchema);
 
 
 
-const client = new MongoClient(MONGO_URI);
 
 
 async function getMealsFromDB() {
-    await client.connect();
-    return await client.db(DB_NAME).collection(COLLECTION_NAME).find({}).toArray();
+  //await mongoose.connect(MONGO_URI);
+  return await Meal.find({});
 }
 
 async function generateMealPlan(userInput) {
-    const client = new MongoClient(MONGO_URI);
+    
     try {
-        await client.connect();
-        const meals = await getMealsFromDB(client);
+        
+        const meals = await getMealsFromDB();
 
         // Estimate daily calorie deficit (7700 kcal = 1 kg fat)
         const dailyDeficit = (userInput.weightLossPerWeekKg * 7700) / 7;
@@ -82,7 +93,8 @@ async function generateMealPlan(userInput) {
         console.error('Error in generateMealPlan:', error);
         throw error;
     } finally {
-        await client.close();
+        // Remember to close the connection when done
+        await mongoose.disconnect();
     }
 }
 

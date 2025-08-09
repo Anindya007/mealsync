@@ -651,7 +651,9 @@ function AuthenticationForm({ onSelect }) {
                     </button>
                     {showGoogleAuthPopover && (
                         <div className="absolute bg-white border rounded-md shadow-lg p-4">
-                            <p className="text-center mb-4">Google Authentication will be implemented here</p>
+                            <p className="text-center mb-4">
+                                Google Authentication will be implemented here
+                            </p>
                             <button
                                 onClick={() => { closeAllPopovers(); }}
                                 className="w-full rounded-sm bg-blue-500 py-2 text-white"
