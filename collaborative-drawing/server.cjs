@@ -19,10 +19,12 @@ const drawingHistory = [];
 wss.on('connection', (ws) => {
     console.log('Client connected');
     clients.add(ws);
-    ws.send(JSON.stringify({
-        type: 'users',
-        count: clients.size
-    }));
+    // Broadcast to itself and all other clients
+        clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({type: 'users', count: clients.size}));
+            }
+        });
     // Send existing drawing history to new client
     if (drawingHistory.length > 0) {
         ws.send(JSON.stringify({
